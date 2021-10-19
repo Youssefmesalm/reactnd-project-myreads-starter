@@ -11,7 +11,7 @@ export class BookChanger extends Component {
     const { book } = this.props;
     return (
       <div className="book-shelf-changer">
-        <select>
+        <select value={book.shelf}>
           <option value="move" disabled>
             Move to...
           </option>
