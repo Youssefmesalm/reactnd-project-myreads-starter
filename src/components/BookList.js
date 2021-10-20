@@ -22,6 +22,7 @@ export class BookList extends Component {
       this.setState(() => ({ books }));
     });
   }
+
   render() {
     const { books } = this.state;
     const { Shelf } = this.props;
