@@ -1,45 +1,44 @@
-import * as BooksAPI from "../BooksAPI";
+import { Change_Shelf } from "../Actions/BooksActions";
+//import PropTypes from "prop-types";
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 export class BookChanger extends Component {
-  state = {
-    value: "",
-  };
-  MoveBook = (book, shelf) => {
-    BooksAPI.update(book, shelf);
-  };
-  HandleClick = (e) => {
-    this.setState({ value: e.target.value });
-  };
-  render() {
+ state={
+   value:this.props.book.shelf===undefined?"none":this.props.book.shelf
+ }
+  HandleChange = (event) => {
     const { book } = this.props;
+    this.setState({value:event.target.value})
+    this.props.dispatch(Change_Shelf(book, event.target.value));
+  
+  };
+
+  render() {
     const { value } = this.state;
     return (
-      <div className="book-shelf-changer">
-        <select
-          value={value === "" ? book.shelf : value}
-          select={value}
-          onChange={(e) => this.MoveBook(book, e.target.value)}
-        >
-          <option value="move" disabled>
-            Move to...
-          </option>
-          <option onClick={(e) => this.HandleClick(e)} value="currentlyReading">
-            Currently Reading
-          </option>
-          <option onClick={(e) => this.HandleClick(e)} value="wantToRead">
-            Want to Read
-          </option>
-          <option onClick={(e) => this.HandleClick(e)} value="read">
-            Read
-          </option>
-          <option onClick={(e) => this.HandleClick(e)} value="none">
-            None
-          </option>
-        </select>
+      <div>
+        <div className="book-shelf-changer">
+          <select
+            value={value}
+            onChange={(e) => this.HandleChange(e)}
+          >
+            <option value="move" disabled>
+              Move to...
+            </option>
+            <option  value="currentlyReading">
+              Currently Reading
+            </option>
+            <option value="wantToRead">Want to Read</option>
+            <option value="read">Read</option>
+            <option value="none">None</option>
+          </select>
+          
+        </div>
       </div>
     );
   }
 }
 
-export default BookChanger;
+
+export default connect()(BookChanger);

@@ -1,34 +1,22 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import * as BooksAPI from "../BooksAPI";
-import Books from "./Books";
+import Books from "../components/Books";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import HandleSearch from "../Actions/SearchActions";
 
-export default class Search extends Component {
+class Search extends Component {
   static propTypes = {
     query: PropTypes.string,
-    data: PropTypes.array,
     UpdateQuery: PropTypes.func,
     HandleChange: PropTypes.func,
   };
-  state = {
-    query: "",
-    data: [],
-  };
+
   HandleChange = (query) => {
-    BooksAPI.search(query)
-      .then((data) => {
-        this.setState({ data });
-      })
-      .catch((err) => console.error(err.error));
+    this.props.dispatch(HandleSearch(query));
   };
-
-  UpdateQuery = (value) => {
-    this.setState({ query: value });
-  };
-
   render() {
-    const { query, data } = this.state;
+    const { query, data } = this.props;
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -42,14 +30,13 @@ export default class Search extends Component {
               value={query}
               onChange={(e) => {
                 e.preventDefault();
-                this.UpdateQuery(e.target.value);
-                query !== "" && this.HandleChange(query);
+                this.HandleChange(e.target.value);
               }}
             />
           </div>
         </div>
         <div className="search-books-results">
-          {query === "" ? (
+          {data.length === 0 ? (
             <p>Let's Start Find Some books</p>
           ) : (
             <Books books={data} />
@@ -59,3 +46,8 @@ export default class Search extends Component {
     );
   }
 }
+const mapStateToProps = (state) => ({
+  query: state.SearchReducer.query,
+  data: state.SearchReducer.data,
+});
+export default connect(mapStateToProps)(Search);
